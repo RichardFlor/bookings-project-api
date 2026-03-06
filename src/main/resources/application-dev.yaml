@@ -57,8 +57,7 @@ spring:
     user: ${DB_USERNAME:postgres}
     password: ${DB_PASSWORD:Senai@127}
 server:
-  port:
-    ${PORT:8080}
+  port: ${PORT:8080}
 default-project:
   base-url: ${BASE_URL:http://localhost:8080/api/v1}
   jwt:
