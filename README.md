@@ -1,1 +1,1 @@
-# bookings-project-api
+# bookings-api-java
