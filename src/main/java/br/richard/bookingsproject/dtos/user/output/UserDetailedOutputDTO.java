@@ -1,5 +1,6 @@
 package br.richard.bookingsproject.dtos.user.output;
 
+import br.richard.bookingsproject.enums.UserRole;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,13 +13,19 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 public class UserDetailedOutputDTO {
+
     private UUID id;
 
-    @Schema(example = "Jorge")
+    @Schema(example = "Example")
     private String name;
 
-    @Schema(example = "jorge@gmail")
+    @Schema(example = "example@gmail.com")
     private String email;
 
-    private LocalDateTime disabledAt;
+    @Schema(example = "GUEST")
+    private UserRole role;
+
+    private LocalDateTime emailValidatedAt;
+
+    private LocalDateTime createdAt;
 }
