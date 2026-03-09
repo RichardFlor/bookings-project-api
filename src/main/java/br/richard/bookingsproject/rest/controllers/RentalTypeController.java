@@ -1,23 +1,34 @@
 package br.richard.bookingsproject.rest.controllers;
 
 import br.richard.bookingsproject.dtos.rentaltype.input.CreateRentalTypeInputDTO;
+import br.richard.bookingsproject.dtos.rentaltype.output.RentalTypeOutputDTO;
 import br.richard.bookingsproject.rest.specs.RentalTypeControllerSpecs;
 import br.richard.bookingsproject.usecases.rentaltype.CreateRentalTypeUseCase;
+import br.richard.bookingsproject.usecases.rentaltype.DeleteRentalTypeByIdUseCase;
+import br.richard.bookingsproject.usecases.rentaltype.FindAllRentalTypesUseCase;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Set;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/rental-types")
 @RequiredArgsConstructor
 public class RentalTypeController implements RentalTypeControllerSpecs {
     private final CreateRentalTypeUseCase createRentalTypeUseCase;
+    private final DeleteRentalTypeByIdUseCase deleteRentalTypeByIdUseCase;
+    private final FindAllRentalTypesUseCase findAllRentalTypesUseCase;
 
     @PostMapping
     public void create(@RequestBody @Valid CreateRentalTypeInputDTO request){
         createRentalTypeUseCase.execute(request);
     }
+
+    @DeleteMapping("/{id}")
+    public void deleted(@PathVariable UUID id){ this.deleteRentalTypeByIdUseCase.execute(id);}
+
+    @GetMapping()
+    public Set<RentalTypeOutputDTO> findAll(){return findAllRentalTypesUseCase.execute();}
 }

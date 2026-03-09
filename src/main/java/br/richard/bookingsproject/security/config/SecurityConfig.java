@@ -70,10 +70,7 @@ public class SecurityConfig {
     private static final String[] PUBLIC_GET_ENDPOINTS = {
             "/users/*/validate-email",
             "/files/*/*",
-            "/companies/*",
-            "/companies",
-            "/categories",
-            "/company-services/companies/*"
+            "/rental-types"
     };
 
     private static final String[] ADMIN_POST_ENDPOINTS = {
@@ -92,7 +89,7 @@ public class SecurityConfig {
     };
 
     private static final String[] ADMIN_DELETE_ENDPOINTS = {
-            "/categories/*"
+            "/rental-types/*"
     };
 
     private RegexRequestMatcher doRegexPath(HttpMethod method, String pathPattern) {
