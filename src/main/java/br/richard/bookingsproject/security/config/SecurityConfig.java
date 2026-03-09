@@ -22,71 +22,108 @@ import org.springframework.security.web.util.matcher.RegexRequestMatcher;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-
     private final AuthenticationFilter authenticationFilter;
 
-    private final String UUID_REGEX = "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}";
-
     private static final String[] SWAGGER_RESOURCES = {
+            "/swagger-ui/**",
+            "/v3/api-docs/**",
+            "/swagger-resources/**",
+            "/docs",
+            "/swagger-ui/**",
             "/swagger-ui/**",
             "/v3/api-docs/**",
             "/swagger-resources/**",
             "/docs/**"
     };
 
+    private static final String[] COMPANY_PATCH_ENDPOINTS = {
+            "/companies/pictures",
+            "/companies/*",
+            "/companies/*/logo",
+            "/company-services/*"
+    };
+
+    private static final String[] COMPANY_POST_ENDPOINTS = {
+            "/companies/*/services",
+            "/companies/*/pictures",
+            "/company-services/*/pictures"
+    };
+    private static final String[] COMPANY_DELETE_ENDPOINTS = {
+            "/companies/*/pictures/*",
+            "/companies/*/logo",
+            "/company-services/*/pictures/*",
+            "/company-services/*"
+    };
+
     private static final String[] PUBLIC_POST_ENDPOINTS = {
-            "/user",
-            "/login"
+            "/login",
+            "/users",
+            "/users/email-exists"
     };
 
     private static final String[] PUBLIC_PATCH_ENDPOINTS = {
             "/require-password-recovery",
             "/validate-password-recovery-code",
-            "/user/change-password"
+            "/users/change-password"
     };
 
     private static final String[] PUBLIC_GET_ENDPOINTS = {
-            "/user/*/validate-email"
+            "/users/*/validate-email",
+            "/files/*/*",
+            "/companies/*",
+            "/companies",
+            "/categories",
+            "/company-services/companies/*"
     };
+
+    private static final String[] ADMIN_POST_ENDPOINTS = {
+            "/rental-types"
+    };
+
+    private static final String[] ADMIN_PATCH_ENDPOINTS = {
+            "/categories/*",
+            "/categories/*/status",
+            "/companies/*/status"
+    };
+
+    private static final String[] ADMIN_GET_ENDPOINTS = {
+            "/categories/*",
+            "/users"
+    };
+
+    private static final String[] ADMIN_DELETE_ENDPOINTS = {
+            "/categories/*"
+    };
+
+    private RegexRequestMatcher doRegexPath(HttpMethod method, String pathPattern) {
+        return RegexRequestMatcher.regexMatcher(method, pathPattern);
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-
+        final var UUID_MATCH = "[0-9a-fA-F]{8}(-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}";
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
-
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
-
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-
                         .requestMatchers(HttpMethod.PATCH, PUBLIC_PATCH_ENDPOINTS).permitAll()
-
                         .requestMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINTS).permitAll()
-
                         .requestMatchers(HttpMethod.GET, PUBLIC_GET_ENDPOINTS).permitAll()
-
+                        .requestMatchers(HttpMethod.POST, ADMIN_POST_ENDPOINTS).hasAnyAuthority(UserRole.ADMIN.name())
+                        .requestMatchers(HttpMethod.GET, ADMIN_GET_ENDPOINTS).hasAnyAuthority(UserRole.ADMIN.name())
+                        .requestMatchers(HttpMethod.PATCH, ADMIN_PATCH_ENDPOINTS).hasAnyAuthority(UserRole.ADMIN.name())
+                        .requestMatchers(HttpMethod.DELETE, ADMIN_DELETE_ENDPOINTS).hasAnyAuthority(UserRole.ADMIN.name())
+//                        .requestMatchers(HttpMethod.PATCH, COMPANY_PATCH_ENDPOINTS).hasAnyAuthority(UserRole.COMPANY.name())
+//                        .requestMatchers(HttpMethod.POST, COMPANY_POST_ENDPOINTS).hasAnyAuthority(UserRole.COMPANY.name())
+//                        .requestMatchers(HttpMethod.DELETE, COMPANY_DELETE_ENDPOINTS).hasAnyAuthority(UserRole.COMPANY.name())
                         .requestMatchers(
-                                RegexRequestMatcher.regexMatcher(
-                                        HttpMethod.GET,
-                                        "/user/" + UUID_REGEX
-                                )
-                        ).hasAnyAuthority(UserRole.ADMIN.name())
-
+                                doRegexPath(HttpMethod.GET, "/users/" + UUID_MATCH)).hasAuthority(UserRole.ADMIN.name())
                         .requestMatchers(SWAGGER_RESOURCES).permitAll()
-
                         .anyRequest().authenticated()
                 )
-
-                .addFilterBefore(
-                        authenticationFilter,
-                        UsernamePasswordAuthenticationFilter.class
-                )
-
+                .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
-
     @Bean
     public AuthenticationManager authenticationManager(
             AuthenticationConfiguration authenticationConfiguration

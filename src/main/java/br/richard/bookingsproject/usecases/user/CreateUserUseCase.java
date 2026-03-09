@@ -77,7 +77,7 @@ public class CreateUserUseCase {
                 .toUriString();
 
         return MessageFormat.format(
-                "{0}/user/{1}/validate-email",
+                "{0}/users/{1}/validate-email",
                 baseUrl,
                 userId
         );

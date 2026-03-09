@@ -64,3 +64,6 @@ default-project:
     secret: ${JWT_SECRET:bookingsProject2026}
     expiration: ${JWT_EXPIRATION:3000}
     issuer: ${JWT_ISSUER:Bookings Project API}
+cht:
+  front:
+    url: "*"

@@ -4,6 +4,7 @@ import br.richard.bookingsproject.errors.ExceptionCode;
 import br.richard.bookingsproject.errors.exceptions.UnauthorizedException;
 import br.richard.bookingsproject.errors.i18n.MessageService;
 import br.richard.bookingsproject.repositories.user.UserJpaRepository;
+import br.richard.bookingsproject.repositories.user.UserRepositoryImpl;
 import br.richard.bookingsproject.security.dto.UserDetailsDTO;
 import br.richard.bookingsproject.security.services.JwtTokenService;
 import jakarta.persistence.EntityNotFoundException;
@@ -27,15 +28,15 @@ import java.util.UUID;
 @Component
 @RequiredArgsConstructor
 public class AuthenticationFilter extends OncePerRequestFilter {
-    private final JwtTokenService jwtTokenService;
-    private final UserJpaRepository userJpaRepository;
     private final MessageService messageService;
+    private final JwtTokenService jwtTokenService;
+    private final UserRepositoryImpl userRepository;
 
     @Override
     protected void doFilterInternal(
-           @NotNull HttpServletRequest request,
-           @NotNull HttpServletResponse response,
-           @NotNull FilterChain filterChain
+            @NotNull HttpServletRequest request,
+            @NotNull HttpServletResponse response,
+            @NotNull FilterChain filterChain
     ) throws ServletException, IOException {
         try{
             final var token = this.extractToken(request);
@@ -67,7 +68,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
     }
 
     private void authenticate(UUID userId, HttpServletRequest request ){
-        final var user = this.userJpaRepository.findById(userId).orElseThrow(EntityNotFoundException::new);
+        final var user = userRepository.findById(userId).orElseThrow(EntityNotFoundException::new);
         final var userDetails = new UserDetailsDTO(user);
 
         final var authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());

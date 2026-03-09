@@ -8,5 +8,6 @@ CREATE TABLE IF NOT EXISTS users (
     password VARCHAR(255) NOT NULL,
     password_recovery_code VARCHAR(100),
     email_validated_at TIMESTAMP,
-    created_at TIMESTAMP NOT NULL
+    created_at TIMESTAMP,
+    deleted_at TIMESTAMP
     );

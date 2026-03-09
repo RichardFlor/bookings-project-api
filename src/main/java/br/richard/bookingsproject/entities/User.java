@@ -14,6 +14,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.UUID;
 
 @Entity
@@ -55,5 +56,12 @@ public class User {
     @CreatedDate
     @DateTimeFormat(pattern = "YYYY-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
+
+    @DateTimeFormat(pattern = "YYYY-MM-dd HH:mm:ss")
+    private LocalDateTime deletedAt;
+
+    public Boolean isActive() {
+        return Objects.isNull(this.deletedAt);
+    }
 
 }
