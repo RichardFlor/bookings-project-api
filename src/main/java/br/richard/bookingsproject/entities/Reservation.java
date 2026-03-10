@@ -4,23 +4,23 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "reservations")
+@Table(name = "reservations", uniqueConstraints = {@UniqueConstraint(name = "uk_reservation_rental_type_date", columnNames = {"rental_type_id", "reservation_date"})})
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 public class Reservation {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -35,7 +35,6 @@ public class Reservation {
     private LocalDate reservationDate;
 
     @CreatedDate
-    @DateTimeFormat(pattern = "YYYY-MM-dd HH:mm:ss")
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 }

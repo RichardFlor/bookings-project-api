@@ -26,4 +26,10 @@ public class CreateUserInputDTO {
     @NotBlank
     @Schema(example = "string", requiredMode = Schema.RequiredMode.REQUIRED)
     private String password;
+
+    @Schema(example = "999.999.999-99", requiredMode = Schema.RequiredMode.REQUIRED)
+    private String cpf;
+
+    @Schema(example = "(11)99999-9999", requiredMode = Schema.RequiredMode.REQUIRED)
+    private String phone;
 }

@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -14,6 +13,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @With
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
@@ -30,6 +30,6 @@ public class RentalType {
     private String description;
 
     @CreatedDate
-    @DateTimeFormat(pattern = "YYYY-MM-dd HH:mm:ss")
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 }

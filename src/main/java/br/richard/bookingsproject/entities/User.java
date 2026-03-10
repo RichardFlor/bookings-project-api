@@ -4,14 +4,10 @@ import br.richard.bookingsproject.enums.UserRole;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.With;
+import lombok.*;
+import org.hibernate.validator.constraints.br.CPF;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -22,6 +18,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @With
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
@@ -29,7 +26,7 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "id", columnDefinition = "uuid", updatable = false, nullable = false)
+    @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 
     @NotBlank
@@ -42,26 +39,34 @@ public class User {
     private String email;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, length = 50)
     private UserRole role;
 
+    @Column(unique = true, length = 14)
+    @CPF
+    private String cpf;
+
+    @Column(length = 20)
+    private String phone;
+
     @NotBlank
-    @Column(nullable = false)
+    @Column(nullable = false, length = 255)
     private String password;
 
+    @Column(name = "password_recovery_code", length = 6)
     private String passwordRecoveryCode;
 
+    @Column(name = "email_validated_at")
     private LocalDateTime emailValidatedAt;
 
     @CreatedDate
-    @DateTimeFormat(pattern = "YYYY-MM-dd HH:mm:ss")
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @DateTimeFormat(pattern = "YYYY-MM-dd HH:mm:ss")
+    @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
     public Boolean isActive() {
         return Objects.isNull(this.deletedAt);
     }
-
 }

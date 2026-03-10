@@ -1,6 +1,6 @@
-CREATE TABLE rental_types (
+CREATE TABLE IF NOT EXISTS rental_types (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    name VARCHAR(100) NOT NULL,
-    description VARCHAR(150),
-    created_at TIMESTAMP NOT NULL
+    name VARCHAR(120) NOT NULL,
+    description VARCHAR(500),
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
