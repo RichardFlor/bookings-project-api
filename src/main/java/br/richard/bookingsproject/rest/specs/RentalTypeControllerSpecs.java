@@ -1,6 +1,7 @@
 package br.richard.bookingsproject.rest.specs;
 
 import br.richard.bookingsproject.dtos.rentaltype.input.CreateRentalTypeInputDTO;
+import br.richard.bookingsproject.dtos.rentaltype.input.UpdateRentalTypeByIdInputDTO;
 import br.richard.bookingsproject.dtos.rentaltype.output.RentalTypeOutputDTO;
 import br.richard.bookingsproject.rest.specs.commons.response.error.ApiResponseBadRequest;
 import br.richard.bookingsproject.rest.specs.commons.response.error.ApiResponseDuplicatedResource;
@@ -47,4 +48,9 @@ public interface RentalTypeControllerSpecs {
     })
     @SecurityRequirement(name="jwt")
     Set<RentalTypeOutputDTO> findAll();
+
+    @Operation(summary = "Edit rental type info",  description = "Required roles: `ADMIN`")
+    @ApiResponse(responseCode = "200", description = "Ok")
+    @SecurityRequirement(name = "jwt")
+    void update(@RequestBody UpdateRentalTypeByIdInputDTO request, @PathVariable(value = "id") UUID id);
 }

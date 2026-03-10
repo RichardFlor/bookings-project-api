@@ -9,13 +9,14 @@ import br.richard.bookingsproject.repositories.user.UserJpaRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
 public class ChangePasswordUseCase {
     private final UserJpaRepository userJpaRepository;
-    private final BCryptPasswordEncoder bcryptPasswordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public void execute(ChangePasswordInputDTO input) {
@@ -25,7 +26,7 @@ public class ChangePasswordUseCase {
         validate(user, input);
 
         user.setPasswordRecoveryCode(null);
-        user.setPassword(bcryptPasswordEncoder.encode(input.getPassword()));
+        user.setPassword(passwordEncoder.encode(input.getPassword()));
 
         userJpaRepository.save(user);
     }

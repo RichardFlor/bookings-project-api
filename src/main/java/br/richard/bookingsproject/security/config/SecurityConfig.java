@@ -78,9 +78,7 @@ public class SecurityConfig {
     };
 
     private static final String[] ADMIN_PATCH_ENDPOINTS = {
-            "/categories/*",
-            "/categories/*/status",
-            "/companies/*/status"
+            "/rental-types/*"
     };
 
     private static final String[] ADMIN_GET_ENDPOINTS = {
