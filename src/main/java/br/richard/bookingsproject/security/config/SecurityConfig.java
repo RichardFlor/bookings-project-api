@@ -39,7 +39,8 @@ public class SecurityConfig {
     private static final String[] PUBLIC_POST_ENDPOINTS = {
             "/login",
             "/users",
-            "/users/email-exists"
+            "/users/email-exists",
+            "/reservations"
     };
 
     private static final String[] PUBLIC_PATCH_ENDPOINTS = {

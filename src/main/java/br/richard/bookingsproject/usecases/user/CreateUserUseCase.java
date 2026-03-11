@@ -41,7 +41,7 @@ public class CreateUserUseCase {
         }
 
         var user = userStructMapper.toEntity(input)
-                .withRole(UserRole.GUEST);
+                .withRole(UserRole.CUSTOMER);
 
         user.setPassword(passwordEncoder.encode(input.getPassword()));
         user.setCreatedAt(LocalDateTime.now());
