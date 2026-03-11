@@ -69,7 +69,8 @@ public class SecurityConfig {
     };
 
     private static final String[] ADMIN_DELETE_ENDPOINTS = {
-            "/rental-types/*"
+            "/rental-types/*",
+            "/reservations/*"
     };
 
     private RegexRequestMatcher doRegexPath(HttpMethod method, String pathPattern) {
