@@ -36,25 +36,6 @@ public class SecurityConfig {
             "/docs/**"
     };
 
-    private static final String[] COMPANY_PATCH_ENDPOINTS = {
-            "/companies/pictures",
-            "/companies/*",
-            "/companies/*/logo",
-            "/company-services/*"
-    };
-
-    private static final String[] COMPANY_POST_ENDPOINTS = {
-            "/companies/*/services",
-            "/companies/*/pictures",
-            "/company-services/*/pictures"
-    };
-    private static final String[] COMPANY_DELETE_ENDPOINTS = {
-            "/companies/*/pictures/*",
-            "/companies/*/logo",
-            "/company-services/*/pictures/*",
-            "/company-services/*"
-    };
-
     private static final String[] PUBLIC_POST_ENDPOINTS = {
             "/login",
             "/users",
@@ -108,9 +89,6 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, ADMIN_GET_ENDPOINTS).hasAnyAuthority(UserRole.ADMIN.name())
                         .requestMatchers(HttpMethod.PATCH, ADMIN_PATCH_ENDPOINTS).hasAnyAuthority(UserRole.ADMIN.name())
                         .requestMatchers(HttpMethod.DELETE, ADMIN_DELETE_ENDPOINTS).hasAnyAuthority(UserRole.ADMIN.name())
-//                        .requestMatchers(HttpMethod.PATCH, COMPANY_PATCH_ENDPOINTS).hasAnyAuthority(UserRole.COMPANY.name())
-//                        .requestMatchers(HttpMethod.POST, COMPANY_POST_ENDPOINTS).hasAnyAuthority(UserRole.COMPANY.name())
-//                        .requestMatchers(HttpMethod.DELETE, COMPANY_DELETE_ENDPOINTS).hasAnyAuthority(UserRole.COMPANY.name())
                         .requestMatchers(
                                 doRegexPath(HttpMethod.GET, "/users/" + UUID_MATCH)).hasAuthority(UserRole.ADMIN.name())
                         .requestMatchers(SWAGGER_RESOURCES).permitAll()
