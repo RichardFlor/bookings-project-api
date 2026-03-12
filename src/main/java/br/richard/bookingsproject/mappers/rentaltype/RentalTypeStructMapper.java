@@ -12,4 +12,6 @@ public interface RentalTypeStructMapper {
     RentalType toEntity(CreateRentalTypeInputDTO dto);
 
     List<RentalTypeOutputDTO> toRentalTypeOutputDTO(List<RentalType> entities);
+
+    RentalTypeOutputDTO toRentalTypeOutputDTO(RentalType entity);
 }

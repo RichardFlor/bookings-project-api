@@ -87,4 +87,12 @@ public interface UserControllerSpecs {
     @SecurityRequirement(name = "jwt")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     void delete();
+
+    @Operation(summary = "Delete user by id", description = "Required roles: `ADMIN`")
+    @ApiResponseNotFound
+    @ApiResponseBusinessRuleException
+    @ApiResponse(responseCode = "204", description = "No Content")
+    @SecurityRequirement(name = "jwt")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    void deleteById(UUID id);
 }

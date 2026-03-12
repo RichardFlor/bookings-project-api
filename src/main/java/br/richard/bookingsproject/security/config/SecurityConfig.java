@@ -52,7 +52,8 @@ public class SecurityConfig {
     private static final String[] PUBLIC_GET_ENDPOINTS = {
             "/users/*/validate-email",
             "/files/*/*",
-            "/rental-types"
+            "/rental-types",
+            "/rental-types/available"
     };
 
     private static final String[] ADMIN_POST_ENDPOINTS = {

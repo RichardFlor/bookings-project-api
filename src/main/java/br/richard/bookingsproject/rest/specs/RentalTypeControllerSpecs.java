@@ -18,8 +18,11 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -53,4 +56,9 @@ public interface RentalTypeControllerSpecs {
     @ApiResponse(responseCode = "200", description = "Ok")
     @SecurityRequirement(name = "jwt")
     void update(@RequestBody UpdateRentalTypeByIdInputDTO request, @PathVariable(value = "id") UUID id);
+
+    @Operation(summary = "List available rental types by date", description = "Returns rental types that do not have reservations on the specified date")
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "Ok", content = @Content(array = @ArraySchema(schema = @Schema(implementation = RentalTypeOutputDTO.class))))})
+    @SecurityRequirement(name = "jwt")
+    List<RentalTypeOutputDTO> findAvailableByDate(@RequestParam LocalDate date);
 }

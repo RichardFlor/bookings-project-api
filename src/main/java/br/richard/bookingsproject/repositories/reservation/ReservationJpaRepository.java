@@ -11,4 +11,8 @@ import java.util.UUID;
 public interface ReservationJpaRepository extends JpaRepository<Reservation, UUID> {
 
     boolean existsByRentalTypeIdAndReservationDate(UUID rentalTypeId, LocalDate reservationDate);
+
+    boolean existsByUserId(UUID userId);
+
+    boolean existsByRentalTypeId(UUID rentalTypeId);
 }

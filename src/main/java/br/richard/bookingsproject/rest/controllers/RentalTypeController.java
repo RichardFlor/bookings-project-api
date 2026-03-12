@@ -4,14 +4,13 @@ import br.richard.bookingsproject.dtos.rentaltype.input.CreateRentalTypeInputDTO
 import br.richard.bookingsproject.dtos.rentaltype.input.UpdateRentalTypeByIdInputDTO;
 import br.richard.bookingsproject.dtos.rentaltype.output.RentalTypeOutputDTO;
 import br.richard.bookingsproject.rest.specs.RentalTypeControllerSpecs;
-import br.richard.bookingsproject.usecases.rentaltype.CreateRentalTypeUseCase;
-import br.richard.bookingsproject.usecases.rentaltype.DeleteRentalTypeByIdUseCase;
-import br.richard.bookingsproject.usecases.rentaltype.FindAllRentalTypesUseCase;
-import br.richard.bookingsproject.usecases.rentaltype.UpdateRentalTypeByIdUseCase;
+import br.richard.bookingsproject.usecases.rentaltype.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -23,6 +22,7 @@ public class RentalTypeController implements RentalTypeControllerSpecs {
     private final DeleteRentalTypeByIdUseCase deleteRentalTypeByIdUseCase;
     private final FindAllRentalTypesUseCase findAllRentalTypesUseCase;
     private final UpdateRentalTypeByIdUseCase updateRentalTypeByIdUseCase;
+    private final FindAvailableRentalTypesByDateUseCase findAvailableRentalTypesByDateUseCase;
 
     @PostMapping
     public void create(@RequestBody @Valid CreateRentalTypeInputDTO request){
@@ -38,5 +38,10 @@ public class RentalTypeController implements RentalTypeControllerSpecs {
     @PatchMapping("/{id}")
     public void update(@RequestBody @Valid UpdateRentalTypeByIdInputDTO request, @PathVariable UUID id){
         this.updateRentalTypeByIdUseCase.execute(request, id);
+    }
+
+    @GetMapping("/available")
+    public List<RentalTypeOutputDTO> findAvailableByDate(@RequestParam LocalDate date) {
+        return findAvailableRentalTypesByDateUseCase.execute(date);
     }
 }
