@@ -65,8 +65,11 @@ public class SecurityConfig {
     };
 
     private static final String[] ADMIN_GET_ENDPOINTS = {
-            "/categories/*",
             "/users"
+    };
+
+    private static final String[] CUSTOMER_GET_ENDPOINTS = {
+            "/reservations/my-reservations"
     };
 
     private static final String[] ADMIN_DELETE_ENDPOINTS = {
@@ -92,6 +95,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, ADMIN_GET_ENDPOINTS).hasAnyAuthority(UserRole.ADMIN.name())
                         .requestMatchers(HttpMethod.PATCH, ADMIN_PATCH_ENDPOINTS).hasAnyAuthority(UserRole.ADMIN.name())
                         .requestMatchers(HttpMethod.DELETE, ADMIN_DELETE_ENDPOINTS).hasAnyAuthority(UserRole.ADMIN.name())
+                        .requestMatchers(HttpMethod.GET, CUSTOMER_GET_ENDPOINTS).hasAnyAuthority(UserRole.CUSTOMER.name())
                         .requestMatchers(
                                 doRegexPath(HttpMethod.GET, "/users/" + UUID_MATCH)).hasAuthority(UserRole.ADMIN.name())
                         .requestMatchers(SWAGGER_RESOURCES).permitAll()

@@ -1,10 +1,14 @@
 package br.richard.bookingsproject.rest.specs;
 
 import br.richard.bookingsproject.dtos.reservation.input.CreateReservationInputDTO;
+import br.richard.bookingsproject.dtos.reservation.output.FindReservationsByCurrentUserOutputDTO;
 import br.richard.bookingsproject.rest.specs.commons.response.error.ApiResponseBadRequest;
 import br.richard.bookingsproject.rest.specs.commons.response.error.ApiResponseDuplicatedResource;
 import br.richard.bookingsproject.rest.specs.commons.response.error.ApiResponseInternalServerError;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -15,6 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import java.util.Set;
 import java.util.UUID;
 
 @ApiResponseInternalServerError
@@ -35,4 +40,11 @@ public interface ReservationControllerSpecs {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @SecurityRequirement(name = "jwt")
     void deleted(@PathVariable UUID id);
+
+    @Operation(summary = "List reservations of logged user")
+    @ApiResponse(responseCode = "200", description = "Ok", content = {
+            @Content(array = @ArraySchema(schema = @Schema(implementation = FindReservationsByCurrentUserOutputDTO.class)))
+    })
+    @SecurityRequirement(name = "jwt")
+    Set<FindReservationsByCurrentUserOutputDTO> findMyReservations();
 }

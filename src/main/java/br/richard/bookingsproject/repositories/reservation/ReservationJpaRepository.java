@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @Repository
@@ -15,4 +16,6 @@ public interface ReservationJpaRepository extends JpaRepository<Reservation, UUI
     boolean existsByUserId(UUID userId);
 
     boolean existsByRentalTypeId(UUID rentalTypeId);
+
+    List<Reservation> findByUserId(UUID userId);
 }
