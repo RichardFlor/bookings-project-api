@@ -15,6 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -29,6 +31,10 @@ public class CreateReservationUseCase {
 
         var user = authService.getLoggedUser();
 
+        if (input.getReservationDate().isBefore(LocalDate.now())) {
+            throw new BusinessRuleException(ExceptionCode.INVALID_RESERVATION_DATE);
+        }
+
         var rentalType = rentalTypeJpaRepository.findById(input.getRentalTypeId())
                 .orElseThrow(() -> new EntityNotFoundException(RentalType.class));
 
@@ -39,10 +45,11 @@ public class CreateReservationUseCase {
             throw new BusinessRuleException(ExceptionCode.NOT_AVAILABLE_DATE_EXCEPTION);
         }
 
-        var reservation = new Reservation();
-        reservation.setUser(user);
-        reservation.setRentalType(rentalType);
-        reservation.setReservationDate(input.getReservationDate());
+        var reservation = Reservation.builder()
+                .user(user)
+                .rentalType(rentalType)
+                .reservationDate(input.getReservationDate())
+                .build();
 
         log.info("Creating reservation for logged user {}", user.getId());
 
