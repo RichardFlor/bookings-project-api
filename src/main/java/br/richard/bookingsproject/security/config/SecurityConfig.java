@@ -1,11 +1,10 @@
 package br.richard.bookingsproject.security.config;
 
-import br.richard.bookingsproject.enums.UserRole;
+import br.richard.bookingsproject.security.dto.RouteDTO;
 import br.richard.bookingsproject.security.filters.AuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -13,97 +12,140 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.util.matcher.RegexRequestMatcher;
+
+import java.util.List;
+
+import static br.richard.bookingsproject.enums.UserRole.ADMIN;
+import static br.richard.bookingsproject.enums.UserRole.CUSTOMER;
+import static org.springframework.http.HttpMethod.*;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+
     private final AuthenticationFilter authenticationFilter;
 
     private static final String[] SWAGGER_RESOURCES = {
             "/swagger-ui/**",
             "/v3/api-docs/**",
             "/swagger-resources/**",
-            "/docs",
-            "/swagger-ui/**",
-            "/swagger-ui/**",
-            "/v3/api-docs/**",
-            "/swagger-resources/**",
             "/docs/**"
     };
 
-    private static final String[] PUBLIC_POST_ENDPOINTS = {
-            "/login",
-            "/users",
-            "/users/email-exists",
-            "/reservations"
-    };
+    private static final RouteDTO PUBLIC_ROUTES = new RouteDTO()
+            .setPaths(POST, List.of(
+                    "/login",
+                    "/users",
+                    "/users/email-exists"
+            ))
+            .setPaths(PATCH, List.of(
+                    "/require-password-recovery",
+                    "/validate-password-recovery-code",
+                    "/users/change-password"
+            ))
+            .setPaths(GET, List.of(
+                    "/users/*/validate-email",
+                    "/files/*/*",
+                    "/rental-types",
+                    "/rental-types/available"
+            ));
 
-    private static final String[] PUBLIC_PATCH_ENDPOINTS = {
-            "/require-password-recovery",
-            "/validate-password-recovery-code",
-            "/users/change-password"
-    };
+    private static final RouteDTO PRIVATE_ROUTES = new RouteDTO()
+            .setPaths(GET, List.of(
+                    "/users/*"
+            ))
+            .setPaths(PATCH, List.of(
+                    "/users/*"
+            ))
+            .setPaths(DELETE, List.of(
+                    "/users/*"
+            ));
 
-    private static final String[] PUBLIC_GET_ENDPOINTS = {
-            "/users/*/validate-email",
-            "/files/*/*",
-            "/rental-types",
-            "/rental-types/available"
-    };
+    private static final RouteDTO ADMIN_ROUTES = new RouteDTO()
+            .setRoles(ADMIN)
+            .setPaths(GET, List.of(
+                    "/users"
+            ))
+            .setPaths(POST, List.of(
+                    "/rental-types"
+            ))
+            .setPaths(PATCH, List.of(
+                    "/rental-types/*"
+            ))
+            .setPaths(DELETE, List.of(
+                    "/rental-types/*"
+            ));
 
-    private static final String[] ADMIN_POST_ENDPOINTS = {
-            "/rental-types"
-    };
+    private static final RouteDTO CUSTOMER_ROUTES = new RouteDTO()
+            .setRoles(CUSTOMER)
+            .setPaths(GET, List.of(
+                    "/reservations/my-reservations"
+            ))
+            .setPaths(PATCH, List.of(
+                    "/reservations/*"
+            ));
 
-    private static final String[] ADMIN_PATCH_ENDPOINTS = {
-            "/rental-types/*"
-    };
-
-    private static final String[] ADMIN_GET_ENDPOINTS = {
-            "/users"
-    };
-
-    private static final String[] CUSTOMER_GET_ENDPOINTS = {
-            "/reservations/my-reservations"
-    };
-
-    private static final String[] ADMIN_DELETE_ENDPOINTS = {
-            "/rental-types/*",
-            "/reservations/*"
-    };
-
-    private RegexRequestMatcher doRegexPath(HttpMethod method, String pathPattern) {
-        return RegexRequestMatcher.regexMatcher(method, pathPattern);
-    }
+    private static final RouteDTO ADMIN_AND_CUSTOMER_ROUTES = new RouteDTO()
+            .setRoles(ADMIN, CUSTOMER)
+            .setPaths(POST, List.of(
+                    "/reservations"
+            ))
+            .setPaths(DELETE, List.of(
+                    "/reservations/*"
+            ));
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        final var UUID_MATCH = "[0-9a-fA-F]{8}(-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}";
+
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.PATCH, PUBLIC_PATCH_ENDPOINTS).permitAll()
-                        .requestMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINTS).permitAll()
-                        .requestMatchers(HttpMethod.GET, PUBLIC_GET_ENDPOINTS).permitAll()
-                        .requestMatchers(HttpMethod.POST, ADMIN_POST_ENDPOINTS).hasAnyAuthority(UserRole.ADMIN.name())
-                        .requestMatchers(HttpMethod.GET, ADMIN_GET_ENDPOINTS).hasAnyAuthority(UserRole.ADMIN.name())
-                        .requestMatchers(HttpMethod.PATCH, ADMIN_PATCH_ENDPOINTS).hasAnyAuthority(UserRole.ADMIN.name())
-                        .requestMatchers(HttpMethod.DELETE, ADMIN_DELETE_ENDPOINTS).hasAnyAuthority(UserRole.ADMIN.name())
-                        .requestMatchers(HttpMethod.GET, CUSTOMER_GET_ENDPOINTS).hasAnyAuthority(UserRole.CUSTOMER.name())
-                        .requestMatchers(
-                                doRegexPath(HttpMethod.GET, "/users/" + UUID_MATCH)).hasAuthority(UserRole.ADMIN.name())
+
+                        .requestMatchers(PATCH, PUBLIC_ROUTES.getPathsByMethod(PATCH)).permitAll()
+                        .requestMatchers(POST, PUBLIC_ROUTES.getPathsByMethod(POST)).permitAll()
+                        .requestMatchers(GET, PUBLIC_ROUTES.getPathsByMethod(GET)).permitAll()
+
+                        .requestMatchers(GET, PRIVATE_ROUTES.getPathsByMethod(GET)).authenticated()
+                        .requestMatchers(PATCH, PRIVATE_ROUTES.getPathsByMethod(PATCH)).authenticated()
+                        .requestMatchers(DELETE, PRIVATE_ROUTES.getPathsByMethod(DELETE)).authenticated()
+
+                        .requestMatchers(GET, ADMIN_ROUTES.getPathsByMethod(GET))
+                        .hasAnyAuthority(ADMIN_ROUTES.getRoles())
+
+                        .requestMatchers(POST, ADMIN_ROUTES.getPathsByMethod(POST))
+                        .hasAnyAuthority(ADMIN_ROUTES.getRoles())
+
+                        .requestMatchers(PATCH, ADMIN_ROUTES.getPathsByMethod(PATCH))
+                        .hasAnyAuthority(ADMIN_ROUTES.getRoles())
+
+                        .requestMatchers(DELETE, ADMIN_ROUTES.getPathsByMethod(DELETE))
+                        .hasAnyAuthority(ADMIN_ROUTES.getRoles())
+
+                        .requestMatchers(GET, CUSTOMER_ROUTES.getPathsByMethod(GET))
+                        .hasAnyAuthority(CUSTOMER_ROUTES.getRoles())
+
+                        .requestMatchers(PATCH, CUSTOMER_ROUTES.getPathsByMethod(PATCH))
+                        .hasAnyAuthority(CUSTOMER_ROUTES.getRoles())
+
+                        .requestMatchers(POST, ADMIN_AND_CUSTOMER_ROUTES.getPathsByMethod(POST))
+                        .hasAnyAuthority(ADMIN_AND_CUSTOMER_ROUTES.getRoles())
+
+                        .requestMatchers(DELETE, ADMIN_AND_CUSTOMER_ROUTES.getPathsByMethod(DELETE))
+                        .hasAnyAuthority(ADMIN_AND_CUSTOMER_ROUTES.getRoles())
+
                         .requestMatchers(SWAGGER_RESOURCES).permitAll()
+
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
+
     @Bean
     public AuthenticationManager authenticationManager(
             AuthenticationConfiguration authenticationConfiguration
@@ -112,7 +154,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 }

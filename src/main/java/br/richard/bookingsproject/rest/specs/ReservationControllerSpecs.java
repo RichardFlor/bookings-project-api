@@ -1,10 +1,9 @@
 package br.richard.bookingsproject.rest.specs;
 
 import br.richard.bookingsproject.dtos.reservation.input.CreateReservationInputDTO;
+import br.richard.bookingsproject.dtos.reservation.input.UpdateReservationInputDTO;
 import br.richard.bookingsproject.dtos.reservation.output.FindReservationsByCurrentUserOutputDTO;
-import br.richard.bookingsproject.rest.specs.commons.response.error.ApiResponseBadRequest;
-import br.richard.bookingsproject.rest.specs.commons.response.error.ApiResponseDuplicatedResource;
-import br.richard.bookingsproject.rest.specs.commons.response.error.ApiResponseInternalServerError;
+import br.richard.bookingsproject.rest.specs.commons.response.error.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -35,16 +34,28 @@ public interface ReservationControllerSpecs {
     @SecurityRequirement(name = "jwt")
     void create(@RequestBody @Valid CreateReservationInputDTO request);
 
-    @Operation(summary = "Delete the reservation",  description = "Required roles: `ADMIN`")
+    @Operation(summary = "Delete the reservation",  description = "Required roles: `ADMIN`, `CUSTOMER`")
     @ApiResponse(responseCode = "204", description = "No content")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @SecurityRequirement(name = "jwt")
     void deleted(@PathVariable UUID id);
 
-    @Operation(summary = "List reservations of logged user")
+    @Operation(summary = "List reservations of logged user",  description = "Required roles: `CUSTOMER`")
     @ApiResponse(responseCode = "200", description = "Ok", content = {
             @Content(array = @ArraySchema(schema = @Schema(implementation = FindReservationsByCurrentUserOutputDTO.class)))
     })
     @SecurityRequirement(name = "jwt")
     Set<FindReservationsByCurrentUserOutputDTO> findMyReservations();
+
+    @Operation(summary = "Update reservation of logged user",  description = "Required roles: `CUSTOMER`")
+    @ApiResponseNotFound
+    @ApiResponseBusinessRuleException
+    @ApiResponse(
+            responseCode = "403",
+            description = "The user is authenticated but does not have permission to perform this action."
+    )
+    @ApiResponse(responseCode = "204", description = "No Content")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @SecurityRequirement(name = "jwt")
+    void updateReservation(UUID id, UpdateReservationInputDTO request);
 }
