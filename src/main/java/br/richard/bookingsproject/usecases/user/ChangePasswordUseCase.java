@@ -8,7 +8,6 @@ import br.richard.bookingsproject.errors.exceptions.EntityNotFoundException;
 import br.richard.bookingsproject.repositories.user.UserJpaRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 

@@ -3,7 +3,6 @@ package br.richard.bookingsproject.usecases.reservation;
 import br.richard.bookingsproject.dtos.reservation.input.CreateReservationInputDTO;
 import br.richard.bookingsproject.entities.RentalType;
 import br.richard.bookingsproject.entities.Reservation;
-import br.richard.bookingsproject.entities.User;
 import br.richard.bookingsproject.errors.ExceptionCode;
 import br.richard.bookingsproject.errors.exceptions.BusinessRuleException;
 import br.richard.bookingsproject.errors.exceptions.EntityNotFoundException;
