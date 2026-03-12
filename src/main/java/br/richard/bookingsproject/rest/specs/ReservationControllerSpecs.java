@@ -1,6 +1,8 @@
 package br.richard.bookingsproject.rest.specs;
 
+import br.richard.bookingsproject.dtos.commons.pagination.output.PaginationOutputDTO;
 import br.richard.bookingsproject.dtos.reservation.input.CreateReservationInputDTO;
+import br.richard.bookingsproject.dtos.reservation.input.FindReservationsByCurrentUserFiltersInputDTO;
 import br.richard.bookingsproject.dtos.reservation.input.UpdateReservationInputDTO;
 import br.richard.bookingsproject.dtos.reservation.output.FindReservationsByCurrentUserOutputDTO;
 import br.richard.bookingsproject.rest.specs.commons.response.error.*;
@@ -13,7 +15,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -40,12 +44,15 @@ public interface ReservationControllerSpecs {
     @SecurityRequirement(name = "jwt")
     void deleted(@PathVariable UUID id);
 
-    @Operation(summary = "List reservations of logged user",  description = "Required roles: `CUSTOMER`")
-    @ApiResponse(responseCode = "200", description = "Ok", content = {
-            @Content(array = @ArraySchema(schema = @Schema(implementation = FindReservationsByCurrentUserOutputDTO.class)))
+    @Operation(summary = "List reservations of the logged user", description = "Returns the reservations made by the authenticated user")
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "Ok", content = @Content(schema = @Schema(implementation = PaginationOutputDTO.class)))
     })
     @SecurityRequirement(name = "jwt")
-    Set<FindReservationsByCurrentUserOutputDTO> findMyReservations();
+    PaginationOutputDTO<FindReservationsByCurrentUserOutputDTO> listMyReservations(
+            @ParameterObject
+            @ModelAttribute
+            FindReservationsByCurrentUserFiltersInputDTO request
+    );
 
     @Operation(summary = "Update reservation of logged user",  description = "Required roles: `CUSTOMER`")
     @ApiResponseNotFound
