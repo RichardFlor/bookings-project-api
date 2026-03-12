@@ -44,7 +44,7 @@ public interface ReservationControllerSpecs {
     @SecurityRequirement(name = "jwt")
     void deleted(@PathVariable UUID id);
 
-    @Operation(summary = "List reservations of the logged user", description = "Returns the reservations made by the authenticated user")
+    @Operation(summary = "List reservations of the logged user", description = "Returns the reservations made by the authenticated user. Required roles: `CUSTOMER`")
     @ApiResponses({@ApiResponse(responseCode = "200", description = "Ok", content = @Content(schema = @Schema(implementation = PaginationOutputDTO.class)))
     })
     @SecurityRequirement(name = "jwt")
