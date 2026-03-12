@@ -9,7 +9,7 @@ import br.richard.bookingsproject.errors.exceptions.BusinessRuleException;
 import br.richard.bookingsproject.errors.exceptions.EntityNotFoundException;
 import br.richard.bookingsproject.repositories.reservation.ReservationJpaRepository;
 import br.richard.bookingsproject.repositories.rentaltype.RentalTypeJpaRepository;
-import br.richard.bookingsproject.repositories.user.UserJpaRepository;
+import br.richard.bookingsproject.services.AuthenticationContextServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,14 +21,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class CreateReservationUseCase {
 
     private final ReservationJpaRepository reservationJpaRepository;
-    private final UserJpaRepository userJpaRepository;
     private final RentalTypeJpaRepository rentalTypeJpaRepository;
+    private final AuthenticationContextServiceImpl authService;
 
     @Transactional
     public void execute(CreateReservationInputDTO input) {
 
-        var user = userJpaRepository.findById(input.getUserId())
-                .orElseThrow(() -> new EntityNotFoundException(User.class));
+        var user = authService.getLoggedUser();
 
         var rentalType = rentalTypeJpaRepository.findById(input.getRentalTypeId())
                 .orElseThrow(() -> new EntityNotFoundException(RentalType.class));
@@ -36,7 +35,7 @@ public class CreateReservationUseCase {
         if (reservationJpaRepository.existsByRentalTypeIdAndReservationDate(
                 input.getRentalTypeId(),
                 input.getReservationDate())) {
-            //throw new RuntimeException("This rental type is already reserved for this date.");
+
             throw new BusinessRuleException(ExceptionCode.NOT_AVAILABLE_DATE_EXCEPTION);
         }
 
@@ -45,7 +44,7 @@ public class CreateReservationUseCase {
         reservation.setRentalType(rentalType);
         reservation.setReservationDate(input.getReservationDate());
 
-        log.info("Creating reservation for user {}", input.getUserId());
+        log.info("Creating reservation for logged user {}", user.getId());
 
         reservationJpaRepository.save(reservation);
     }
