@@ -1,11 +1,13 @@
 package br.richard.bookingsproject.dtos.rentaltype.output;
 
-import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.Parameter;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.UUID;
+
 
 @Getter
 @Setter
@@ -13,11 +15,9 @@ import java.util.UUID;
 public class RentalTypeOutputDTO {
     private UUID id;
 
-    @Schema(example = "Reserva restaurante")
+    @Parameter(description = "McDonuts")
     private String name;
 
+    @Parameter(description = "McDonuts is a shop that sells donuts.")
     private String description;
-
-
-    //private BoardStatus boardStatus;
 }

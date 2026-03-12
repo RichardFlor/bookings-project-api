@@ -1,6 +1,8 @@
 package br.richard.bookingsproject.rest.specs;
 
+import br.richard.bookingsproject.dtos.commons.pagination.output.PaginationOutputDTO;
 import br.richard.bookingsproject.dtos.rentaltype.input.CreateRentalTypeInputDTO;
+import br.richard.bookingsproject.dtos.rentaltype.input.FindRentalTypesByFiltersInputDTO;
 import br.richard.bookingsproject.dtos.rentaltype.input.UpdateRentalTypeByIdInputDTO;
 import br.richard.bookingsproject.dtos.rentaltype.output.RentalTypeOutputDTO;
 import br.richard.bookingsproject.rest.specs.commons.response.error.ApiResponseBadRequest;
@@ -15,15 +17,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 @ApiResponseInternalServerError
@@ -46,11 +45,18 @@ public interface RentalTypeControllerSpecs {
     void deleted(@PathVariable UUID id);
 
     @Operation(summary = "List rental types")
-    @ApiResponse(responseCode = "200", description = "Ok", content = {
-            @Content(array = @ArraySchema(schema = @Schema(implementation = RentalTypeOutputDTO.class)))
-    })
-    @SecurityRequirement(name="jwt")
-    Set<RentalTypeOutputDTO> findAll();
+    @ApiResponse(
+            responseCode = "200",
+            description = "Ok",
+            content = @Content(
+                    schema = @Schema(implementation = PaginationOutputDTO.class)
+            )
+    )
+    PaginationOutputDTO<RentalTypeOutputDTO> list(
+            @ParameterObject
+            @ModelAttribute
+            FindRentalTypesByFiltersInputDTO request
+    );
 
     @Operation(summary = "Edit rental type info",  description = "Required roles: `ADMIN`")
     @ApiResponse(responseCode = "200", description = "Ok")

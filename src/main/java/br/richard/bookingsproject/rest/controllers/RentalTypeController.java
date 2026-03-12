@@ -1,17 +1,19 @@
 package br.richard.bookingsproject.rest.controllers;
 
+import br.richard.bookingsproject.dtos.commons.pagination.output.PaginationOutputDTO;
 import br.richard.bookingsproject.dtos.rentaltype.input.CreateRentalTypeInputDTO;
+import br.richard.bookingsproject.dtos.rentaltype.input.FindRentalTypesByFiltersInputDTO;
 import br.richard.bookingsproject.dtos.rentaltype.input.UpdateRentalTypeByIdInputDTO;
 import br.richard.bookingsproject.dtos.rentaltype.output.RentalTypeOutputDTO;
 import br.richard.bookingsproject.rest.specs.RentalTypeControllerSpecs;
 import br.richard.bookingsproject.usecases.rentaltype.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 @RestController
@@ -33,7 +35,14 @@ public class RentalTypeController implements RentalTypeControllerSpecs {
     public void deleted(@PathVariable UUID id){ this.deleteRentalTypeByIdUseCase.execute(id);}
 
     @GetMapping()
-    public Set<RentalTypeOutputDTO> findAll(){return findAllRentalTypesUseCase.execute();}
+    public PaginationOutputDTO<RentalTypeOutputDTO> list(
+            @ParameterObject
+            @ModelAttribute
+            @Valid
+            FindRentalTypesByFiltersInputDTO request
+    ) {
+        return findAllRentalTypesUseCase.execute(request);
+    }
 
     @PatchMapping("/{id}")
     public void update(@RequestBody @Valid UpdateRentalTypeByIdInputDTO request, @PathVariable UUID id){
