@@ -1,5 +1,6 @@
 package br.richard.bookingsproject.rest.specs;
 
+import br.richard.bookingsproject.dtos.commons.pagination.input.PaginationInputDTO;
 import br.richard.bookingsproject.dtos.commons.pagination.output.PaginationOutputDTO;
 import br.richard.bookingsproject.dtos.rentaltype.input.CreateRentalTypeInputDTO;
 import br.richard.bookingsproject.dtos.rentaltype.input.FindRentalTypesByFiltersInputDTO;
@@ -9,7 +10,6 @@ import br.richard.bookingsproject.rest.specs.commons.response.error.ApiResponseB
 import br.richard.bookingsproject.rest.specs.commons.response.error.ApiResponseDuplicatedResource;
 import br.richard.bookingsproject.rest.specs.commons.response.error.ApiResponseInternalServerError;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -22,7 +22,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.UUID;
 
 @ApiResponseInternalServerError
@@ -64,7 +63,9 @@ public interface RentalTypeControllerSpecs {
     void update(@RequestBody UpdateRentalTypeByIdInputDTO request, @PathVariable(value = "id") UUID id);
 
     @Operation(summary = "List available rental types by date", description = "Returns rental types that do not have reservations on the specified date")
-    @ApiResponses({@ApiResponse(responseCode = "200", description = "Ok", content = @Content(array = @ArraySchema(schema = @Schema(implementation = RentalTypeOutputDTO.class))))})
-    @SecurityRequirement(name = "jwt")
-    List<RentalTypeOutputDTO> findAvailableByDate(@RequestParam LocalDate date);
+    @ApiResponse(responseCode = "200", description = "Ok", content = @Content(schema = @Schema(implementation = PaginationOutputDTO.class)))
+    PaginationOutputDTO<RentalTypeOutputDTO> findAvailableByDate(
+            @RequestParam LocalDate date,
+            @ParameterObject PaginationInputDTO pagination
+    );
 }

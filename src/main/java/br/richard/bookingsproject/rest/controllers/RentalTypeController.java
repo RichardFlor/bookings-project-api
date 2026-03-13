@@ -1,5 +1,6 @@
 package br.richard.bookingsproject.rest.controllers;
 
+import br.richard.bookingsproject.dtos.commons.pagination.input.PaginationInputDTO;
 import br.richard.bookingsproject.dtos.commons.pagination.output.PaginationOutputDTO;
 import br.richard.bookingsproject.dtos.rentaltype.input.CreateRentalTypeInputDTO;
 import br.richard.bookingsproject.dtos.rentaltype.input.FindRentalTypesByFiltersInputDTO;
@@ -13,7 +14,6 @@ import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -50,7 +50,10 @@ public class RentalTypeController implements RentalTypeControllerSpecs {
     }
 
     @GetMapping("/available")
-    public List<RentalTypeOutputDTO> findAvailableByDate(@RequestParam LocalDate date) {
-        return findAvailableRentalTypesByDateUseCase.execute(date);
+    public PaginationOutputDTO<RentalTypeOutputDTO> findAvailableByDate(
+            @RequestParam LocalDate date,
+            @ParameterObject PaginationInputDTO pagination
+    ) {
+        return findAvailableRentalTypesByDateUseCase.execute(date, pagination);
     }
 }
