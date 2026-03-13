@@ -1,54 +1,115 @@
 # Bookings Project API
 
-API para gerenciamento de reservas.
-
-## 🔐 Credenciais de acesso
-
-### Admin
-
-Use as credenciais abaixo para acessar como administrador:
-
-Email: [admin@admin.com](mailto:admin@admin.com)
-Senha: string
-
-### Customer
-
-Para acessar como **customer**, é necessário criar um usuário pela rota **create user**.
-
-⚠️ Utilize um **email válido**, pois será necessário **confirmar o email** para conseguir acessar a aplicação.
+API REST para gerenciamento de reservas de tipos de locação.
+Desenvolvida com **Java 21 Spring Boot**, utilizando **JWT Authentication**, **Flyway Migrations**, **Docker**, e **PostgreSQL**.
 
 ---
 
-# 🗄️ Configuração do Banco de Dados
+# Tecnologias utilizadas
 
-Caso rode a aplicação **sem Docker**, é necessário criar manualmente um banco no **PostgreSQL** com o nome:
+* Java 21
+* Spring Boot
+* Spring Security
+* JWT Authentication
+* PostgreSQL
+* Flyway
+* Docker
+* Docker Compose
+* Swagger / OpenAPI
+* Maven
+
+---
+
+## ⚠️ Requisitos de ambiente
+
+Para rodar o projeto é necessário ter instalado:
+
+### Com Docker 🐳 (recomendado)
+```
+ Docker
+ Docker Compose
+```
+### Sem Docker ❌ 
+```
+ Java 21
+ Maven
+ PostgreSQL
+```
+---
+
+# Como rodar o projeto
+
+Clone o repositório:
+
+```bash
+git clone https://github.com/RichardFlor/bookings-project-api.git
+cd bookings-project-api
+```
+
+---
+
+## 🐳 Rodando com Docker
+
+Execute no terminal:
+
+```bash
+docker compose up --build
+```
+
+A aplicação ficará disponível em:
+
+```
+http://localhost:8080
+```
+
+Swagger:
+
+```
+http://localhost:8080/api/v1/swagger-ui/index.html
+```
+
+---
+
+# Rodando sem Docker
+
+Caso prefira rodar localmente sem Docker:
+
+## 🗄️ 1 - Criar banco de dados no PostgreSQL
+
+Crie um banco com o nome:
 
 ```
 bookings-project-db
 ```
 
-Credenciais do banco:
+## 🗄️ 2 - Configuração do banco
+
+Utilize as seguintes credenciais:
 
 ```
 DB_USERNAME=postgres
 DB_PASSWORD=Senai@127
 ```
 
----
+## ⚙️ 3 - Variável de ambiente
 
-# ⚙️ Variáveis de Ambiente
-
-Adicione na sua IDE a seguinte variável de ambiente:
+Adicione na sua IDE a variável:
 
 ```
 PROFILE=dev
 ```
 
+## ⚙️ 4 - Rodar a aplicação
+
+```bash
+mvn spring-boot:run
+```
+
 ---
 
-# 📄 Documentação da API (Swagger)
+## 📄 Documentação da API
 
-Após iniciar a aplicação, acesse:
+A documentação interativa da API está disponível via Swagger:
 
 ```
 http://localhost:8080/api/v1/swagger-ui/index.html
@@ -56,20 +117,33 @@ http://localhost:8080/api/v1/swagger-ui/index.html
 
 ---
 
-# 🐳 Rodando com Docker
+## 🔐 Autenticação
 
-Caso prefira rodar com Docker:
+A API utiliza **JWT Authentication**.
 
-No terminal execute:
+## Credenciais de Admin
 
-```
-docker compose up --build
-```
-
-Após subir os containers, acesse o Swagger em:
+Para acessar como administrador:
 
 ```
-http://localhost:8080/api/v1/swagger-ui/index.html
+Email: admin@admin.com
+Senha: string
 ```
 
+## ⚠️ Acesso como Customer
+
+Para acessar como **customer**:
+ ```
+  1. Crie um usuário pela rota **create user**
+  2. Utilize um **email válido**
+  3. Confirme o **email de verificação**
+  4. Após confirmar o email será possível realizar login na aplicação
+```
+---
+
+## 🗄️ Migrações de Banco
+
+As migrações são gerenciadas automaticamente pelo **Flyway** ao iniciar a aplicação.
+
+---
 
