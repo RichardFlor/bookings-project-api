@@ -24,17 +24,12 @@ Desenvolvida com **Java 21 Spring Boot**, utilizando **JWT Authentication**, **F
 
 Para rodar o projeto é necessário ter instalado:
 
-### Com Docker 🐳 (recomendado)
+### Docker 🐳 
 ```
  Docker
  Docker Compose
 ```
-### Sem Docker ❌ 
-```
- Java 21
- Maven
- PostgreSQL
-```
+
 ---
 
 # Como rodar o projeto
@@ -66,43 +61,6 @@ Swagger:
 
 ```
 http://localhost:8080/api/v1/swagger-ui/index.html
-```
-
----
-
-# Rodando sem Docker
-
-Caso prefira rodar localmente sem Docker:
-
-## 🗄️ 1 - Criar banco de dados no PostgreSQL
-
-Crie um banco com o nome:
-
-```
-bookings-project-db
-```
-
-## 🗄️ 2 - Configuração do banco
-
-Utilize as seguintes credenciais:
-
-```
-DB_USERNAME=postgres
-DB_PASSWORD=Senai@127
-```
-
-## ⚙️ 3 - Variável de ambiente
-
-Adicione na sua IDE a variável:
-
-```
-PROFILE=dev
-```
-
-## ⚙️ 4 - Rodar a aplicação
-
-```bash
-mvn spring-boot:run
 ```
 
 ---
