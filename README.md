@@ -63,6 +63,12 @@ Swagger:
 http://localhost:8080/api/v1/swagger-ui/index.html
 ```
 
+Kafka UI:
+
+```
+http://localhost:8081/
+```
+
 ---
 
 ## 📄 Documentação da API
