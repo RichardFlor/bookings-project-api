@@ -1,5 +1,6 @@
 package br.richard.bookingsproject.usecases.reservation;
 
+import br.richard.bookingsproject.dtos.events.ReservationCreatedEventInputDTO;
 import br.richard.bookingsproject.dtos.reservation.input.CreateReservationInputDTO;
 import br.richard.bookingsproject.entities.RentalType;
 import br.richard.bookingsproject.entities.Reservation;
@@ -9,6 +10,7 @@ import br.richard.bookingsproject.errors.exceptions.EntityNotFoundException;
 import br.richard.bookingsproject.repositories.reservation.ReservationJpaRepository;
 import br.richard.bookingsproject.repositories.rentaltype.RentalTypeJpaRepository;
 import br.richard.bookingsproject.services.AuthenticationContextServiceImpl;
+import br.richard.bookingsproject.services.ReservationProducer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,7 @@ public class CreateReservationUseCase {
     private final ReservationJpaRepository reservationJpaRepository;
     private final RentalTypeJpaRepository rentalTypeJpaRepository;
     private final AuthenticationContextServiceImpl authService;
+    private final ReservationProducer reservationProducer;
 
     @Transactional
     public void execute(CreateReservationInputDTO input) {
@@ -53,5 +56,15 @@ public class CreateReservationUseCase {
         log.info("Creating reservation for logged user {}", user.getId());
 
         reservationJpaRepository.save(reservation);
+
+        ReservationCreatedEventInputDTO event =
+                ReservationCreatedEventInputDTO.builder()
+                        .reservationId(reservation.getId())
+                        .userId(reservation.getUser().getId())
+                        .reservationDate(reservation.getReservationDate())
+                        .status("CREATED")
+                        .build();
+
+        reservationProducer.sendReservationCreatedEvent(event);
     }
 }
