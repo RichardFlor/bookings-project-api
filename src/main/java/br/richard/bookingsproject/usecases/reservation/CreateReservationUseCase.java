@@ -43,7 +43,6 @@ public class CreateReservationUseCase {
         if (reservationJpaRepository.existsByRentalTypeIdAndReservationDate(
                 input.getRentalTypeId(),
                 input.getReservationDate())) {
-
             throw new BusinessRuleException(ExceptionCode.NOT_AVAILABLE_DATE_EXCEPTION);
         }
 
@@ -53,17 +52,16 @@ public class CreateReservationUseCase {
                 .reservationDate(input.getReservationDate())
                 .build();
 
-        log.info("Creating reservation for logged user {}", user.getId());
+        log.info("Creating reservation for the user {}", user.getId());
 
         reservationJpaRepository.save(reservation);
 
-        ReservationCreatedEventInputDTO event =
-                ReservationCreatedEventInputDTO.builder()
-                        .reservationId(reservation.getId())
-                        .userId(reservation.getUser().getId())
-                        .reservationDate(reservation.getReservationDate())
-                        .status("CREATED")
-                        .build();
+        var event = ReservationCreatedEventInputDTO.builder()
+                .reservationId(reservation.getId())
+                .userId(reservation.getUser().getId())
+                .reservationDate(reservation.getReservationDate())
+                .status("CREATED")
+                .build();
 
         reservationProducer.sendReservationCreatedEvent(event);
     }
