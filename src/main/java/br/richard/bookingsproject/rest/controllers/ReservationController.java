@@ -13,25 +13,31 @@ import br.richard.bookingsproject.usecases.reservation.UpdateReservationByCurren
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Set;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/reservations")
 @RequiredArgsConstructor
 public class ReservationController implements ReservationControllerSpecs {
+
     private final CreateReservationUseCase createReservationUseCase;
     private final DeleteReservationByIdUseCase deleteReservationByIdUseCase;
     private final FindReservationsByCurrentUserUseCase findReservationsByCurrentUserUseCase;
     private final UpdateReservationByCurrentUserUseCase updateReservationByCurrentUserUseCase;
 
     @PostMapping
-    public void create(@RequestBody @Valid CreateReservationInputDTO request){ createReservationUseCase.execute(request);}
+    public ResponseEntity<Void> create(@RequestBody @Valid CreateReservationInputDTO request) {
+        createReservationUseCase.execute(request);
+        return ResponseEntity.accepted().build();
+    }
 
     @DeleteMapping("/{id}")
-    public void deleted(@PathVariable UUID id){ this.deleteReservationByIdUseCase.execute(id);}
+    public void deleted(@PathVariable UUID id) {
+        this.deleteReservationByIdUseCase.execute(id);
+    }
 
     @GetMapping("/my-reservations")
     public PaginationOutputDTO<FindReservationsByCurrentUserOutputDTO> listMyReservations(

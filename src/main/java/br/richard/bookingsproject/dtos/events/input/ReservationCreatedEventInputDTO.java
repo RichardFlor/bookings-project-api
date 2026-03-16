@@ -1,4 +1,4 @@
-package br.richard.bookingsproject.dtos.events;
+package br.richard.bookingsproject.dtos.events.input;
 
 import lombok.*;
 

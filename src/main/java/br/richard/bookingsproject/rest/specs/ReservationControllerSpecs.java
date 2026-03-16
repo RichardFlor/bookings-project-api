@@ -7,7 +7,6 @@ import br.richard.bookingsproject.dtos.reservation.input.UpdateReservationInputD
 import br.richard.bookingsproject.dtos.reservation.output.FindReservationsByCurrentUserOutputDTO;
 import br.richard.bookingsproject.rest.specs.commons.response.error.*;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -16,29 +15,29 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import java.util.Set;
 import java.util.UUID;
 
 @ApiResponseInternalServerError
 @Tag(name = "4. Reservation", description = "Reservation operations")
 public interface ReservationControllerSpecs {
+
     @Operation(summary = "Create reservation")
     @ApiResponseBadRequest
     @ApiResponseDuplicatedResource
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Created"),
+            @ApiResponse(responseCode = "202", description = "Accepted — reservation request received and queued for processing"),
     })
-    @ResponseStatus(HttpStatus.CREATED)
     @SecurityRequirement(name = "jwt")
-    void create(@RequestBody @Valid CreateReservationInputDTO request);
+    ResponseEntity<Void> create(@RequestBody @Valid CreateReservationInputDTO request);
 
-    @Operation(summary = "Delete the reservation",  description = "Required roles: `ADMIN`, `CUSTOMER`")
+    @Operation(summary = "Delete the reservation", description = "Required roles: `ADMIN`, `CUSTOMER`")
     @ApiResponse(responseCode = "204", description = "No content")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @SecurityRequirement(name = "jwt")
@@ -54,7 +53,7 @@ public interface ReservationControllerSpecs {
             FindReservationsByCurrentUserFiltersInputDTO request
     );
 
-    @Operation(summary = "Update reservation of logged user",  description = "Required roles: `CUSTOMER`")
+    @Operation(summary = "Update reservation of logged user", description = "Required roles: `CUSTOMER`")
     @ApiResponseNotFound
     @ApiResponseBusinessRuleException
     @ApiResponse(
