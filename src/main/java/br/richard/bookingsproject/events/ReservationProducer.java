@@ -1,4 +1,4 @@
-package br.richard.bookingsproject.services;
+package br.richard.bookingsproject.events;
 
 
 import br.richard.bookingsproject.dtos.events.input.ReservationCreatedEventInputDTO;

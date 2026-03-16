@@ -5,7 +5,7 @@ import br.richard.bookingsproject.dtos.reservation.input.CreateReservationInputD
 import br.richard.bookingsproject.errors.ExceptionCode;
 import br.richard.bookingsproject.errors.exceptions.BusinessRuleException;
 import br.richard.bookingsproject.services.AuthenticationContextServiceImpl;
-import br.richard.bookingsproject.services.ReservationProducer;
+import br.richard.bookingsproject.events.ReservationProducer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
