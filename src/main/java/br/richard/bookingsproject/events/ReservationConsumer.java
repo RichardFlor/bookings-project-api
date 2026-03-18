@@ -57,7 +57,7 @@ public class ReservationConsumer {
 
             reservationJpaRepository.save(reservation);
 
-            log.info("Reserva {} criada com sucesso para usuário {}",
+            log.info("Reservation {} successfully created for user {}",
                     reservation.getId(), event.getUserId());
 
             var confirmedEvent = ReservationCreatedEventInputDTO.builder()
@@ -70,7 +70,7 @@ public class ReservationConsumer {
             reservationProducer.sendReservationCreatedEvent(confirmedEvent);
 
         } catch (Exception e) {
-            log.error("Erro ao processar pedido de reserva para usuário {}: {}",
+            log.error("Error processing reservation request for user {}: {}",
                     event.getUserId(), e.getMessage());
             throw e;
         }
